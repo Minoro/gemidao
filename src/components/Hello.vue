@@ -13,7 +13,8 @@
 
 import StreamRecorder from '../utils/StreamRecorder';
 import BufferLoader from '../utils/BufferLoader';
-
+// import Recorder from '../utils/recorder';
+// require('../utils/recorder');
 
 export default {
   name: 'home',
@@ -35,47 +36,55 @@ export default {
       this.dataUrl = '';
     },
     stop() {
+
+      //gera um blob com o audio gravado para ser utilizado
       var blob = this.recorder.stopRecord();
-
-      // passa o audio para o player 
-      // var mediaControl = document.querySelector('audio');
-      // mediaControl.src = (window.URL || window.webkitURL).createObjectURL(blob);
-
       this.dataUrl = (window.URL || window.webkitURL).createObjectURL(blob);
 
-
-      console.log(this.dataUrl);
-      console.log(typeof(blob));
-      console.log(blob);
-
-      // var array_buffer = this.recorder.dataURItoArrayBuffer(this.dataUrl);
       var context = new (window.AudioContext || window.webkitAudioContext)();
       var destination = context.createMediaStreamDestination();
       var bufferLoader;
       var soundSource = null;
+
+      var bufferToWav = require('audiobuffer-to-wav');//lib para gravar o audio em um arquivo wav
+
       bufferLoader = new BufferLoader(
         context,
         [
-         this.dataUrl,
-         '/static/audio/gemidao.mp3'
+         this.dataUrl, //carrega o audio gravado
+         '/static/audio/gemidao.mp3' //carrega o arquivo do gemido
         ],
-        function(bufferList){
-          var source1 = context.createBufferSource();
-          source1.buffer = bufferLoader.appendBuffer(bufferList[0],bufferList[1]);
-          console.log(source1.buffer);
-          source1.connect(context.destination);
-          source1.start(0);
+        (bufferList) => {
+
+          soundSource = context.createBufferSource();
+          soundSource.buffer = bufferLoader.appendBuffer(bufferList[0],bufferList[1]);
+          
+          var wav = bufferToWav(soundSource.buffer)
+          var blob = new window.Blob([ new DataView(wav) ], {
+            type: 'audio/wav'
+          })
+
+          var url = window.URL.createObjectURL(blob)
+          var anchor = document.createElement('a')
+          document.body.appendChild(anchor)
+          anchor.style = 'display: none';
+
+          anchor.href = url
+          anchor.download = 'audio.wav'
+          anchor.click()
+          window.URL.revokeObjectURL(url)
+          
+
         });
 
       bufferLoader.load();
-     
+
       this.isRecording = false;
     }
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
 h1, h2 {
   font-weight: normal;
