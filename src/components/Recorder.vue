@@ -1,5 +1,5 @@
 <template>
-  <div class="record">
+  <div class="record container section">
 
     <div class="buttons-wrap">
       <a @click="record" v-if="!isRecording" class="button is-primary record-button">
@@ -31,7 +31,15 @@
       </a>
       
     </div>
-        
+    
+    <div class="text">
+      <div class="columns is-mobile">
+        <div class="column is-half is-offset-one-quarter">
+          <p>Grave um audio com o seu microfone e ao final do audio será colocado o <strong>Gemidão do Zap</strong>, faça o download, envie para os seus amigos e OOOHHHH AHHH OOOHHHHHHHH AAAAHHHHH! Você caiu no <strong>Gemidão do Zap!</strong></p>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -129,6 +137,11 @@ export default {
 
 .buttons-wrap {
   display: block;
-  margin-top: 20px;
+  margin: 20px auto;
 }
+
+.text p {
+  font-size: 16px;
+}
+
 </style>
