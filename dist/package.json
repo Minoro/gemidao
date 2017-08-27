@@ -1,0 +1,17 @@
+{
+  "name": "gemidao",
+  "version": "1.0.0",
+  "description": "Um pwa para fazer o gemidão do zap.",
+  "author": "André Minoro Fusioka <minorofusioka@hotmail.com>",
+  "private": true,
+  "scripts": {
+    "build": "node build/build.js",
+    "postinstall": "npm install express"
+  },
+  "dependencies": {
+    "audiobuffer-to-wav": "^1.0.0",
+    "vue": "^2.3.3",
+    "vue-blu": "^0.1.9",
+    "vue-router": "^2.3.1"
+  }
+}

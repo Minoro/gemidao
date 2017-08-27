@@ -118,7 +118,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .record-button {
   width: 80px;
   height: 80px;
