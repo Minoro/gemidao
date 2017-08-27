@@ -7,7 +7,7 @@
       </alert>
     </div>
 
-    <div class="buttons-wrap">
+    <div class="buttons-wrap" v-if="!noSupport">
       <a @click="record" v-if="!isRecording" class="button is-primary record-button">
         <span class="icon is-medium">
           <i class="fa fa-microphone"></i>
@@ -22,7 +22,7 @@
       </a>
     </div>
     
-    <div class="buttons-wrap" v-if="!isRecording">
+    <div class="buttons-wrap" v-if="!isRecording && !noSupport">
       <b-switch :on-change="changeOutputFormat"></b-switch>{{outputFormat}}
     </div>
 
