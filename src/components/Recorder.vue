@@ -15,6 +15,18 @@
         Parar
       </a>
     </div>
+    
+    <div class="buttons-wrap" v-if="!isRecording">
+      <b-switch :on-change="changeOutputFormat"></b-switch>{{outputFormat}}
+    </div>
+
+    <div class="text" v-if="loadAudio">
+      <div class="column is-mobile">
+        <div class="column is-half is-offset-one-quarter">
+          <p>Aguarde, isso pode levar um momento</p>
+        </div>
+      </div>
+    </div>
 
     <div class="buttons-wrap">
       <a 
@@ -23,7 +35,7 @@
         :href="finalAudioUrl" 
         v-if="loadAudio || finalAudioUrl" 
         target="_blank" 
-        download='audio.wav'>
+        :download='downloadFile'>
         Download
         <span class="icon">
           <i class="fa fa-download"></i>
@@ -36,6 +48,13 @@
       <div class="columns is-mobile">
         <div class="column is-half is-offset-one-quarter">
           <p>Grave um audio com o seu microfone e ao final do audio será colocado o <strong>Gemidão do Zap</strong>, faça o download, envie para os seus amigos e OOOHHHH AHHH OOOHHHHHHHH AAAAHHHHH! Você caiu no <strong>Gemidão do Zap!</strong></p>
+
+          <a class="button" href="https://github.com/Minoro/gemidao" target="_blank">
+            <span class="icon is-medium">
+              <i class="fa fa-github"></i>
+            </span>
+            <span>GitHub</span>
+          </a>
         </div>
       </div>
     </div>
@@ -47,6 +66,7 @@
 
 import StreamRecorder from '../utils/StreamRecorder';
 import BufferLoader from '../utils/BufferLoader';
+import AudioConverter from '../utils/AudioConverter';
 
 export default {
   name: 'home',
@@ -56,7 +76,10 @@ export default {
       loadAudio: false,
       dataUrl: '', //url do audio gravado pelo microfone
       finalAudioUrl: '', //url para download do arquivo final
-      recorder: new StreamRecorder()
+      downloadFile: 'audio.wav',//nome do arquivo de saida
+      outputFormat: 'wav',
+      recorder: new StreamRecorder(),
+      audioConverter: new AudioConverter()
     }
   },
   mounted() {
@@ -85,7 +108,7 @@ export default {
       var bufferLoader;
       var soundSource = null;
 
-      var bufferToWav = require('audiobuffer-to-wav');//lib para gravar o audio em um arquivo wav
+      // var bufferToWav = require('audiobuffer-to-wav');//lib para gravar o audio em um arquivo wav
 
       bufferLoader = new BufferLoader(
         context,
@@ -95,14 +118,20 @@ export default {
         ],
         (bufferList) => {
 
+          //concatena o audio do microfone com o gemido
           soundSource = context.createBufferSource();
           soundSource.buffer = bufferLoader.appendBuffer(bufferList[0],bufferList[1]);
           
-          //gera o arquivo de saida
-          var wav = bufferToWav(soundSource.buffer)
-          var blob = new window.Blob([ new DataView(wav) ], {
-            type: 'audio/wav'
-          })
+
+          //gera o arquivo de saida 
+          var wav = this.audioConverter.bufferToWav(soundSource.buffer);
+         
+          if(this.outputFormat === 'mp3'){
+            var mp3Buffer = this.audioConverter.wavToMp3(wav);
+            var blob = this.audioConverter.bufferToBlob(mp3Buffer, 'audio/mp3');
+          } else {
+            var blob = this.audioConverter.bufferToBlob([ new DataView(wav) ], 'audio/wav');
+          }
 
           //url do blob do arquivo final
           this.finalAudioUrl = window.URL.createObjectURL(blob);
@@ -113,6 +142,15 @@ export default {
       bufferLoader.load();
 
       this.isRecording = false;
+    },
+    changeOutputFormat() {
+      if(this.outputFormat === 'wav'){
+        this.outputFormat = 'mp3';
+        this.downloadFile = 'audio.mp3';
+      }else {
+        this.outputFormat = 'wav';
+        this.downloadFile = 'audio.wav';
+      }
     }
   }
 }
