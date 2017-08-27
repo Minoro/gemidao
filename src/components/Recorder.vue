@@ -108,8 +108,6 @@ export default {
       var bufferLoader;
       var soundSource = null;
 
-      // var bufferToWav = require('audiobuffer-to-wav');//lib para gravar o audio em um arquivo wav
-
       bufferLoader = new BufferLoader(
         context,
         [
@@ -137,6 +135,10 @@ export default {
           this.finalAudioUrl = window.URL.createObjectURL(blob);
           
           this.loadAudio = false;
+
+          //volta para o valor original
+          this.outputFormat = 'wav';
+          this.downloadFile = 'audio.wav';
         });
 
       bufferLoader.load();
