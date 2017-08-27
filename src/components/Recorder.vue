@@ -45,7 +45,7 @@
     </div>
     
     <div class="text">
-      <div class="columns is-mobile">
+      <div class="columns is-desktop">
         <div class="column is-half is-offset-one-quarter">
           <p>Grave um audio com o seu microfone e ao final do audio será colocado o <strong>Gemidão do Zap</strong>, faça o download, envie para os seus amigos e OOOHHHH AHHH OOOHHHHHHHH AAAAHHHHH! Você caiu no <strong>Gemidão do Zap!</strong></p>
 
