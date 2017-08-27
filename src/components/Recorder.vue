@@ -22,7 +22,7 @@
       </a>
     </div>
     
-    <div class="buttons-wrap" v-if="!isRecording && !noSupport">
+    <div class="buttons-wrap" v-show="!noSupport && !isRecording && !loadAudio" :checked="isMp3">
       <b-switch :on-change="changeOutputFormat"></b-switch>{{outputFormat}}
     </div>
 
@@ -92,6 +92,9 @@ export default {
 
     noSupport: function(){
       return !this.recorder.hasGetUserMedia();
+    },
+    isMp3: function(){
+      return this.outputFormat === 'mp3';
     }
   },
   methods: {
@@ -128,7 +131,6 @@ export default {
           soundSource = context.createBufferSource();
           soundSource.buffer = bufferLoader.appendBuffer(bufferList[0],bufferList[1]);
           
-
           //gera o arquivo de saida 
           var wav = this.audioConverter.bufferToWav(soundSource.buffer);
          
@@ -144,9 +146,6 @@ export default {
           
           this.loadAudio = false;
 
-          //volta para o valor original
-          this.outputFormat = 'wav';
-          this.downloadFile = 'audio.wav';
         });
 
       bufferLoader.load();
