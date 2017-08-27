@@ -1,6 +1,12 @@
 <template>
   <div class="record container section">
 
+    <div class="text" v-if="noSupport">
+      <alert title="Um erro ocorreu" type="danger" icon="meh-o">
+        Ops! Parece que seu navegador não tem suporte para essa aplicação...
+      </alert>
+    </div>
+
     <div class="buttons-wrap">
       <a @click="record" v-if="!isRecording" class="button is-primary record-button">
         <span class="icon is-medium">
@@ -82,9 +88,11 @@ export default {
       audioConverter: new AudioConverter()
     }
   },
-  mounted() {
-    //@TODO -- implementar tratamento para falta de suporte a captura de audio
-    // console.log(this.recorder.hasGetUserMedia());
+  computed: {
+
+    noSupport: function(){
+      return !this.recorder.hasGetUserMedia();
+    }
   },
   methods: {
     record() {
